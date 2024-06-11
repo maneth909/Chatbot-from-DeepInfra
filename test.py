@@ -1,7 +1,7 @@
 import requests
 
 # Set your DeepInfra API key
-API_KEY = 'aanNnBnBwStL8i0CNQuS1SG6JRYUr4s8'
+API_KEY = '*******'
 BASE_URL = 'https://api.deepinfra.com/v1/openai/chat/completions'
 
 # Function to get a response from the chatbot
