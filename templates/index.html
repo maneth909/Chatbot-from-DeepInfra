@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222831;
+        }
+
+        .chatbox {
+            width: 60%;
+            margin: 40px auto;
+            background-color: #31363F;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .chatlogs {
+            height: 480px;
+            overflow-y: scroll;
+            padding: 10px;
+            background-color: #31363F;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .chatlogs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chat {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            max-width: 75%;
+            word-wrap: break-word;
+        }
+
+        .user {
+            margin-left: auto;
+            flex-direction: row-reverse;
+            text-align: right;
+        }
+
+        .bot {
+            margin-right: auto;
+            flex-direction: row;
+            text-align: left;
+        }
+
+        .chat img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 10px;
+        }
+
+        .chat .message {
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .user .message {
+            background-color: #97FEED;
+            margin: 10px 0;
+        }
+
+        .bot .message {
+            background-color: #EEEEEE;
+        }
+
+        .input-container {
+            position: relative;
+            background-color: #31363F;
+            padding: 10px;
+            border-top: 2px solid #222831;
+        }
+
+        .input {
+            width: calc(100% - 60px);
+            padding: 10px;
+            border: 1px solid #222831;
+            border-radius: 10px;
+            color: #EEEEEE;
+            background-color: #222831;
+        }
+
+        .button {
+            padding: 10px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #97FEED;
+        }
+    </style>
+</head>
+<body>
+    <div class="chatbox">
+        <div class="chatlogs" id="chatlogs"></div>
+        <div class="input-container">
+            <input type="text" id="message" class="input" placeholder="Type your message here...">
+            <button id="send" class="button"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('send').addEventListener('click', sendMessage);
+        document.getElementById('message').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const messageInput = document.getElementById('message');
+            const message = messageInput.value;
+            if (message.trim() === '') return;
+
+            appendMessage('user', message);
+            messageInput.value = '';
+
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                appendMessage('bot', data.response);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function appendMessage(role, message) {
+            const chatlogs = document.getElementById('chatlogs');
+            const chat = document.createElement('div');
+            chat.className = 'chat ' + role;
+
+            const profilePic = document.createElement('img');
+            profilePic.src = role === 'user' ? 'https://media.istockphoto.com/id/1358773518/vector/black-thug-life-meme-glasses-in-pixel-art-style.jpg?s=612x612&w=0&k=20&c=93g1fyCWjMZQ1-f4WKgTC47k7xZhQXW_M_MJ2xo6IzY=' : 'https://miro.medium.com/v2/resize:fit:500/1*zzo23Ils3C0ZDbvZakwXlg.png'; // Replace with actual URLs
+
+            const messageText = document.createElement('div');
+            messageText.className = 'message';
+            messageText.textContent = message;
+
+            chat.appendChild(profilePic);
+            chat.appendChild(messageText);
+            chatlogs.appendChild(chat);
+            chatlogs.scrollTop = chatlogs.scrollHeight;
+        }
+    </script>
+</body>
+</html>
