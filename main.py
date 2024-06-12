@@ -4,7 +4,7 @@ import requests
 app = Flask(__name__)
 
 # Set your DeepInfra API key
-API_KEY = '********'
+API_KEY = '******'
 BASE_URL = 'https://api.deepinfra.com/v1/openai/chat/completions'
 
 # Function to get a response from the chatbot
